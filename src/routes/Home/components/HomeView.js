@@ -43,11 +43,7 @@ const playMidi = () => {
 
 export const HomeView = () => (
   <div>
-    <h4>Welcome!</h4>
-    <img
-      alt='This is a duck, because Redux!'
-      className='duck'
-      src={DuckImage} />
+    <h4>#YOLO!</h4>
     {playMidi()}
   </div>
 )
