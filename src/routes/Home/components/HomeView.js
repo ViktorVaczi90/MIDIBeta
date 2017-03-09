@@ -1,51 +1,50 @@
 import React from 'react'
-import DuckImage from '../assets/Duck.jpg'
-import './HomeView.scss'
 import MidiConvert from 'midiconvert';
-import MIDI from 'midi.js'
 import Tone from 'tone';
 
-const MidiWriter = require('midi-writer-js');
+import './HomeView.scss'
 
-var synth = new Tone.Synth().toMaster();
+const MidiWriter = require('midi-writer-js');
+const synth = new Tone.Synth().toMaster();
 
 const writeMIDI = () => {
-  // Start with a new track
-  var track = new MidiWriter.Track();
-
-// Define an instrument (optional):
+  let track = new MidiWriter.Track();
   track.addEvent(new MidiWriter.ProgramChangeEvent({ instrument: 1 }));
-
-// Add some notes:
-  var note = new MidiWriter.NoteEvent({ pitch: ['C4'], duration: '4' });
+  let note = new MidiWriter.NoteEvent({ pitch: ['C4'], duration: '4' });
   track.addEvent(note);
-  var note = new MidiWriter.NoteEvent({ pitch: ['D4'], duration: '4' });
+  note = new MidiWriter.NoteEvent({ pitch: ['D4'], duration: '4' });
   track.addEvent(note);
-  var note = new MidiWriter.NoteEvent({ pitch: [ 'E4'], duration: '4' });
+  note = new MidiWriter.NoteEvent({ pitch: [ 'E4'], duration: '4' });
   track.addEvent(note);
-
-// Generate a data URI
   return new MidiWriter.Writer([track]);
-//console.log(write.dataUri());
 };
 
 const playMidi = () => {
-  var synth = new Tone.Synth().toMaster();
+  const synth = new Tone.Synth().toMaster();
   MidiConvert.load(writeMIDI().dataUri(), function (midi) {
     Tone.Transport.bpm.value = midi.bpm
-    var midiPart = new Tone.Part(function (time, note) {
+    const midiPart = new Tone.Part(function (time, note) {
       synth.triggerAttackRelease(note.name, note.duration, time, note.velocity)
     }, midi.tracks[0].notes).start()
-
     Tone.Transport.start()
   })
 };
 
-export const HomeView = () => (
-  <div>
-    <h4>#YOLO!</h4>
+export const HomeView = () =>
+{
+  let stringNumber = 6;
+  let ratio = 15;
+  let fullScale = 3000;
+  let frets = Array.from(new Array(13)).map((item,index) =>{
+    return <rect x={fullScale-fullScale/Math.pow(2,index/15)} y="0" width="7" height={fullScale/ratio} fill="#C0C0C0"  />
+  })
+  return <div>
+    <svg width={fullScale} height="200">
+      <rect x="0" y="0" width={fullScale/1.7} height={fullScale/ratio} fill="#8B4513" />
+      {frets}
+    </svg>
     {playMidi()}
   </div>
-)
+}
 
 export default HomeView
