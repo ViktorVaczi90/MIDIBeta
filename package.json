@@ -76,6 +76,7 @@
   "author": "David Zukowski <david@zuko.me> (http://zuko.me)",
   "license": "MIT",
   "dependencies": {
+    "express": "^4.14.0",
     "babel-core": "^6.17.0",
     "babel-loader": "^6.2.5",
     "babel-plugin-transform-runtime": "^6.15.0",
@@ -133,7 +134,6 @@
     "eslint-plugin-promise": "^3.0.0",
     "eslint-plugin-react": "^6.0.0",
     "eslint-plugin-standard": "^2.0.0",
-    "express": "^4.14.0",
     "karma": "^1.0.0",
     "karma-coverage": "^1.0.0",
     "karma-mocha": "^1.0.1",
