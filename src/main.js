@@ -17,7 +17,7 @@ const MOUNT_NODE = document.getElementById('root')
 
 let render = () => {
   const routes = require('./routes/index').default(store)
-  injectTapEventPlugin();
+  //injectTapEventPlugin(); Maybe later :)
   ReactDOM.render(
     <AppContainer store={store} routes={routes} />,
     MOUNT_NODE

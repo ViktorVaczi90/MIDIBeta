@@ -29,7 +29,7 @@ const writeMIDI = () => {
     track.addEvent(note);
 
 
-    /*    note = new MidiWriter.NoteEvent({pitch: ['D4'], duration: '4'});
+        note = new MidiWriter.NoteEvent({pitch: ['D4'], duration: '4'});
      track.addEvent(note);
      note = new MidiWriter.NoteEvent({pitch: ['E4'], duration: '4'});
      track.addEvent(note);
@@ -42,7 +42,7 @@ const writeMIDI = () => {
      note = new MidiWriter.NoteEvent({pitch: ['B4'], duration: '4'});
      track.addEvent(note);
      note = new MidiWriter.NoteEvent({pitch: ['C5'], duration: '4'});
-     track.addEvent(note);*/
+     track.addEvent(note);
 
 
     return new MidiWriter.Writer([track]);
@@ -222,7 +222,7 @@ class HomeView extends React.Component {
         let fretsColor = "#C0C0C0";
         let textCorrection = 5;
         let fretHeightCorrection = 4;
-        let fretData = mapNoteToFretboard(this.props.currentNote, 0, "green");
+        let fretData = mapNoteToFretboard(this.props.currentNote, 5, "green");
         let horizontalShift = 400;
         let verticalShift = 200;
         return <div>
