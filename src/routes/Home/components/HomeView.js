@@ -80,35 +80,7 @@ const mapNoteToFretboard = (note, position, color, stringStarts = [64, 59, 55, 5
                 .map(item => ({fretNum: note.midi - stringStarts[stringIndex], color, text: note.name})))
     console.log({ready})
     return ready
-    let E6 = '';
-    let B5 = '';
-    let G4 = '';
-    let D3 = '';
-    let A2 = '';
-    let E1 = '';
 
-    if (note.midi >= 65) {
-        E6 = note.midi
-    } else if (note.midi >= 61) {
-        B5 = note.midi
-    } else if (note.midi >= 56) {
-        G4 = note.midi
-    } else if (note.midi >= 51) {
-        D3 = note.midi
-    } else if (note.midi >= 46) {
-        A2 = note.midi
-    } else if (note.midi >= 41) {
-        E1 = note.midi
-    }
-
-    return [
-        [{fretNum: E6 - 64, color, text: note.name}],
-        [{fretNum: B5 - 59, color, text: note.name}],
-        [{fretNum: G4 - 55, color, text: note.name}],
-        [{fretNum: D3 - 50, color, text: note.name}],
-        [{fretNum: A2 - 45, color, text: note.name}],
-        [{fretNum: E1 - 40, color, text: note.name}]
-    ]
 
 }
 const createSvg = (stringNumber,
@@ -125,68 +97,107 @@ const createSvg = (stringNumber,
                    fretsColor,
                    textCorrection,
                    fretHeightCorrection,
-                   fretData)=> {
+                   fretData,
+                   horizontalShift,
+                   verticalShift)=> {
+    // Displays the notes with the name of them on the fretboard
     let fretStuff = fretData.map((string, stringIndex)=> {
         return string.map(fret=> {
             let origo = {
                 x: (fullScale - fullScale / Math.pow(2, (fret.fretNum - 1) / ratio) + fullScale - fullScale / Math.pow(2, fret.fretNum / ratio)) / 2,
                 y: ((fullScale / ratio) / (stringNumber)) / 2 + ((fullScale / ratio)) / (stringNumber) * stringIndex
             };
+            let origoBlankedString = {
+                x: (30),
+                y: ((fullScale / ratio) / (stringNumber)) / 2 + ((fullScale / ratio)) / (stringNumber) * stringIndex
+            };
             let fretLength = {
                 x: ((fullScale - fullScale / Math.pow(2, fret.fretNum / ratio)) - (fullScale - fullScale / Math.pow(2, (fret.fretNum - 1) / ratio))) - fretWidth * 2,
                 y: ((fullScale / ratio) / stringNumber)
             };
-            return [<rect x={origo.x-fretLength.x/2} y={origo.y-(fretLength.y/2)} width={fretLength.x+fretWidth}
+
+            let ifOrigo = [
+                    <rect x={horizontalShift+(origo.x-fretLength.x/2)} y={verticalShift+(origo.y-(fretLength.y/2))}
+                          width={fretLength.x+fretWidth}
                           height={fretLength.y-fretHeightCorrection}
                           fill={fret.color}/>,
-                <text x={origo.x} y={origo.y+textCorrection} fontSize={textSize}>{fret.text}</text>]
+                    <text x={horizontalShift+origo.x} y={verticalShift+(origo.y+textCorrection)}
+                          fontSize={textSize}>{fret.text}</text>
+                ];
 
+            let ifOrigoBlankedString = [
+                    <rect x={horizontalShift+(origoBlankedString.x-fretLength.x/2)}
+                          y={verticalShift+(origoBlankedString.y-(fretLength.y/2))} width="30"
+                          height={fretLength.y-fretHeightCorrection}
+                          fill={fret.color}/>,
+                    <text x={horizontalShift-textCorrection*4}
+                          y={verticalShift+(origoBlankedString.y+textCorrection)}
+                          fontSize={textSize}>{fret.text}</text>
+                ];
+            if (fret.fretNum == 0){
+                return ifOrigoBlankedString
+            }else{
+                return ifOrigo
+            }
         })
     });
-
+    // Displays nut
+    let nut = () => {
+        return <rect x={horizontalShift-fretWidth-35/2} y={verticalShift} width="35" height={(fullScale/ratio)}
+                     fill={fretsColor}/>
+    };
+    // Define: the distance of the frets
     let frets = Array.from(new Array(numberOfFrets)).map((item, index) => {
-        return <rect key={index} x={fullScale-fullScale/Math.pow(2,index/ratio)} y="0" width={fretWidth}
+        return <rect key={index} x={horizontalShift+(fullScale-fullScale/Math.pow(2,index/ratio))} y={verticalShift}
+                     width={fretWidth}
                      height={fullScale/ratio}
                      fill={fretsColor}/>
     });
-
+    // Displays the strings according to stringNumber
     let strings = Array.from(new Array(stringNumber)).map((item, index) => {
 
-        return <rect key={index} x={fretWidth}
-                     y={((fullScale/ratio)/(stringNumber))/2+((fullScale/ratio)/stringNumber)*index}
+        return <rect key={index} x={horizontalShift+fretWidth}
+                     y={verticalShift+(((fullScale/ratio)/(stringNumber))/2+((fullScale/ratio)/stringNumber)*index)}
                      width={fullScale-fullScale/Math.pow(2,numberOfFrets/ratio)} height={3+index}
                      fill={stringColor}/>
     });
-
+    // Display the mark points on the guitar neck
     let fretBoardPoint = markPoint.map((item, index)=> {
         if (item > numberOfFrets) return undefined;
         let returnCircle;
         if (item == 12 || item == 24) {
             returnCircle = [
                 <circle key={"down"+index}
-                        cx={(fullScale-fullScale/Math.pow(2,(item-1)/ratio)+fullScale-fullScale/Math.pow(2,item/ratio))/2+fretWidth/2}
-                        cy={(fullScale/ratio/4)*3} r={pointSize} fill={markPointColor}/>,
+                        cx={horizontalShift+(fullScale-fullScale/Math.pow(2,(item-1)/ratio)+fullScale-fullScale/Math.pow(2,item/ratio))/2+fretWidth/2}
+                        cy={verticalShift+((fullScale/ratio/4)*3)} r={pointSize} fill={markPointColor}/>,
 
                 <circle key={"up"+index}
-                        cx={(fullScale-fullScale/Math.pow(2,(item-1)/ratio)+fullScale-fullScale/Math.pow(2,item/ratio))/2+fretWidth/2}
-                        cy={(fullScale/ratio/4)} r={pointSize} fill={markPointColor}/>]
+                        cx={horizontalShift+(fullScale-fullScale/Math.pow(2,(item-1)/ratio)+fullScale-fullScale/Math.pow(2,item/ratio))/2+fretWidth/2}
+                        cy={verticalShift+((fullScale/ratio/4))} r={pointSize} fill={markPointColor}/>]
         } else {
             returnCircle =
                 <circle key={index}
-                        cx={(fullScale-fullScale/Math.pow(2,(item-1)/ratio)+fullScale-fullScale/Math.pow(2,item/15))/2+fretWidth/2}
-                        cy={fullScale/ratio/2} r={pointSize} fill={markPointColor}/>
+                        cx={horizontalShift+(fullScale-fullScale/Math.pow(2,(item-1)/ratio)+fullScale-fullScale/Math.pow(2,item/15))/2+fretWidth/2}
+                        cy={verticalShift+(fullScale/ratio/2)} r={pointSize} fill={markPointColor}/>
         }
         return returnCircle;
     });
-    return <svg width={fullScale} height={fullScale/ratio}>
-        <rect x="0" y="0" width={fullScale-fullScale/Math.pow(2,numberOfFrets/ratio)} height={fullScale/ratio}
-              fill={fretBoardColor}/>
+
+    // Displays blank fretboard without frets or strings
+    let blankFretboard = () => {
+        return <rect x={horizontalShift} y={verticalShift} width={fullScale-fullScale/Math.pow(2,numberOfFrets/ratio)}
+                     height={fullScale/ratio}
+                     fill={fretBoardColor}/>
+    }
+
+    return <svg width={fullScale} height={verticalShift+(fullScale/ratio)+verticalShift}>
+        {blankFretboard()}
         {frets}
         {fretBoardPoint}
+        {nut()}
         {strings}
         {fretStuff}
     </svg>
-
 
 }
 class HomeView extends React.Component {
@@ -196,6 +207,7 @@ class HomeView extends React.Component {
 
     render() {
         console.log("render")
+
         let stringNumber = 6;
         let numberOfFrets = 16;
         let ratio = 15;
@@ -210,7 +222,9 @@ class HomeView extends React.Component {
         let fretsColor = "#C0C0C0";
         let textCorrection = 5;
         let fretHeightCorrection = 4;
-        let fretData = mapNoteToFretboard(this.props.currentNote, 8, "green")
+        let fretData = mapNoteToFretboard(this.props.currentNote, 0, "green");
+        let horizontalShift = 400;
+        let verticalShift = 200;
         return <div>
             {createSvg(stringNumber,
                 numberOfFrets,
@@ -226,7 +240,9 @@ class HomeView extends React.Component {
                 fretsColor,
                 textCorrection,
                 fretHeightCorrection,
-                fretData)}
+                fretData,
+                horizontalShift,
+                verticalShift)}
         </div>
     }
 }
