@@ -11,30 +11,40 @@ const synth = new Tone.Synth().toMaster();
 const writeMIDI = () => {
     let track = new MidiWriter.Track();
     track.addEvent(new MidiWriter.ProgramChangeEvent({instrument: 1}));
-    let note = new MidiWriter.NoteEvent({pitch: ['C4'], duration: '4'});
+    let note = new MidiWriter.NoteEvent({pitch: ['C3'], duration: '4'});
     track.addEvent(note);
-    note = new MidiWriter.NoteEvent({pitch: ['E4'], duration: '4'});
+    note = new MidiWriter.NoteEvent({pitch: ['D3'], duration: '4'});
     track.addEvent(note);
-    note = new MidiWriter.NoteEvent({pitch: ['C4'], duration: '4'});
+    note = new MidiWriter.NoteEvent({pitch: ['E3'], duration: '4'});
     track.addEvent(note);
-    note = new MidiWriter.NoteEvent({pitch: ['E4'], duration: '4'});
+    note = new MidiWriter.NoteEvent({pitch: ['F3'], duration: '4'});
     track.addEvent(note);
-    note = new MidiWriter.NoteEvent({pitch: ['G4'], duration: '2'});
+    note = new MidiWriter.NoteEvent({pitch: ['G3'], duration: '4'});
     track.addEvent(note);
-    note = new MidiWriter.NoteEvent({pitch: ['G4'], duration: '2'});
+    note = new MidiWriter.NoteEvent({pitch: ['A3'], duration: '4'});
     track.addEvent(note);
-    note = new MidiWriter.NoteEvent({pitch: ['C4'], duration: '4'});
-    track.addEvent(note);
-    note = new MidiWriter.NoteEvent({pitch: ['E4'], duration: '4'});
+    note = new MidiWriter.NoteEvent({pitch: ['B3'], duration: '4'});
     track.addEvent(note);
     note = new MidiWriter.NoteEvent({pitch: ['C4'], duration: '4'});
     track.addEvent(note);
-    note = new MidiWriter.NoteEvent({pitch: ['E4'], duration: '4'});
-    track.addEvent(note);
-    note = new MidiWriter.NoteEvent({pitch: ['G4'], duration: '2'});
-    track.addEvent(note);
-    note = new MidiWriter.NoteEvent({pitch: ['G4'], duration: '2'});
-    track.addEvent(note);
+
+
+    /*    note = new MidiWriter.NoteEvent({pitch: ['D4'], duration: '4'});
+     track.addEvent(note);
+     note = new MidiWriter.NoteEvent({pitch: ['E4'], duration: '4'});
+     track.addEvent(note);
+     note = new MidiWriter.NoteEvent({pitch: ['F4'], duration: '4'});
+     track.addEvent(note);
+     note = new MidiWriter.NoteEvent({pitch: ['G4'], duration: '4'});
+     track.addEvent(note);
+     note = new MidiWriter.NoteEvent({pitch: ['A4'], duration: '4'});
+     track.addEvent(note);
+     note = new MidiWriter.NoteEvent({pitch: ['B4'], duration: '4'});
+     track.addEvent(note);
+     note = new MidiWriter.NoteEvent({pitch: ['C5'], duration: '4'});
+     track.addEvent(note);*/
+
+
     return new MidiWriter.Writer([track]);
 };
 
@@ -50,14 +60,56 @@ const playMidi = (changeNote) => {
         Tone.Transport.start()
     })
 };
-const mapNoteToFretboard = (note, position, color) => {
-    return [[{fretNum: note.midi-55, color, text: note.name}],
-        [],
-        [],
-        [],
-        [],
-        []
+const mapNoteToFretboard = (note, position, color, stringStarts = [64, 59, 55, 50, 45, 40]) => {
+    let good = stringStarts
+        .map(i=>note.midi - i)
+        .map(i=>[{fretPosition: i}])
+        .map(i=>i.filter(obj=>obj.fretPosition >= 0))
+    let bestFit = good.reduce((acc, curr)=> {
+        if (!curr.length) {
+            return acc
+
+        }
+        //console.log({curr,acc, position, calc: curr[0].fretPosition -position })
+        if (curr[0].fretPosition - position >= 0 && curr[0].fretPosition - position < acc) return curr[0].fretPosition - position
+        return acc
+    }, 999);
+    let ready = good
+        .map((i, stringIndex)=>
+            i.filter(item => item.fretPosition - position === bestFit)
+                .map(item => ({fretNum: note.midi - stringStarts[stringIndex], color, text: note.name})))
+    console.log({ready})
+    return ready
+    let E6 = '';
+    let B5 = '';
+    let G4 = '';
+    let D3 = '';
+    let A2 = '';
+    let E1 = '';
+
+    if (note.midi >= 65) {
+        E6 = note.midi
+    } else if (note.midi >= 61) {
+        B5 = note.midi
+    } else if (note.midi >= 56) {
+        G4 = note.midi
+    } else if (note.midi >= 51) {
+        D3 = note.midi
+    } else if (note.midi >= 46) {
+        A2 = note.midi
+    } else if (note.midi >= 41) {
+        E1 = note.midi
+    }
+
+    return [
+        [{fretNum: E6 - 64, color, text: note.name}],
+        [{fretNum: B5 - 59, color, text: note.name}],
+        [{fretNum: G4 - 55, color, text: note.name}],
+        [{fretNum: D3 - 50, color, text: note.name}],
+        [{fretNum: A2 - 45, color, text: note.name}],
+        [{fretNum: E1 - 40, color, text: note.name}]
     ]
+
 }
 const createSvg = (stringNumber,
                    numberOfFrets,
@@ -158,7 +210,7 @@ class HomeView extends React.Component {
         let fretsColor = "#C0C0C0";
         let textCorrection = 5;
         let fretHeightCorrection = 4;
-        let fretData = mapNoteToFretboard(this.props.currentNote, 0, "red")
+        let fretData = mapNoteToFretboard(this.props.currentNote, 8, "green")
         return <div>
             {createSvg(stringNumber,
                 numberOfFrets,
