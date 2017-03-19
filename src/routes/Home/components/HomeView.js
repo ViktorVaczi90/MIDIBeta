@@ -8,41 +8,25 @@ import './HomeView.scss'
 const MidiWriter = require('midi-writer-js');
 const synth = new Tone.Synth().toMaster();
 
+let resList = [];
+for (let i = 3;i<= 6; i++){
+    let tempList = [];
+    let noteList = ['E', 'F', 'F#', 'G', 'A', 'A#', 'B', 'C', 'C#','D', 'D#'];
+    tempList = noteList.map((item, index) => {return item+i});
+    resList = resList.concat(tempList);
+}
+let numList = []
+for (i = 30; i<=73; i++){
+    numList.push(i)
+}
+
+
 const writeMIDI = () => {
     let track = new MidiWriter.Track();
     track.addEvent(new MidiWriter.ProgramChangeEvent({instrument: 1}));
     let note = new MidiWriter.NoteEvent({pitch: ['C3'], duration: '4'});
     track.addEvent(note);
-    note = new MidiWriter.NoteEvent({pitch: ['D3'], duration: '4'});
-    track.addEvent(note);
-    note = new MidiWriter.NoteEvent({pitch: ['E3'], duration: '4'});
-    track.addEvent(note);
-    note = new MidiWriter.NoteEvent({pitch: ['F3'], duration: '4'});
-    track.addEvent(note);
-    note = new MidiWriter.NoteEvent({pitch: ['G3'], duration: '4'});
-    track.addEvent(note);
-    note = new MidiWriter.NoteEvent({pitch: ['A3'], duration: '4'});
-    track.addEvent(note);
-    note = new MidiWriter.NoteEvent({pitch: ['B3'], duration: '4'});
-    track.addEvent(note);
-    note = new MidiWriter.NoteEvent({pitch: ['C4'], duration: '4'});
-    track.addEvent(note);
 
-
-    /*    note = new MidiWriter.NoteEvent({pitch: ['D4'], duration: '4'});
-     track.addEvent(note);
-     note = new MidiWriter.NoteEvent({pitch: ['E4'], duration: '4'});
-     track.addEvent(note);
-     note = new MidiWriter.NoteEvent({pitch: ['F4'], duration: '4'});
-     track.addEvent(note);
-     note = new MidiWriter.NoteEvent({pitch: ['G4'], duration: '4'});
-     track.addEvent(note);
-     note = new MidiWriter.NoteEvent({pitch: ['A4'], duration: '4'});
-     track.addEvent(note);
-     note = new MidiWriter.NoteEvent({pitch: ['B4'], duration: '4'});
-     track.addEvent(note);
-     note = new MidiWriter.NoteEvent({pitch: ['C5'], duration: '4'});
-     track.addEvent(note);*/
 
 
     return new MidiWriter.Writer([track]);
@@ -222,7 +206,7 @@ class HomeView extends React.Component {
         let fretsColor = "#C0C0C0";
         let textCorrection = 5;
         let fretHeightCorrection = 4;
-        let fretData = mapNoteToFretboard(this.props.currentNote, 0, "green");
+        let fretData = mapNoteToFretboard(this.props.currentNote, 5, "green");
         let horizontalShift = 400;
         let verticalShift = 200;
         return <div>
