@@ -4,6 +4,7 @@ import Tone from 'tone';
 import { connect } from 'react-redux'
 import { changeCurrentNote } from '../../../store/currentNote'
 import './HomeView.scss'
+import {Model} from '../../../kerasSrc/keras'
 
 const MidiWriter = require('midi-writer-js');
 const synth = new Tone.Synth().toMaster();
