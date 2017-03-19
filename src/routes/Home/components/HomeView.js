@@ -5,61 +5,37 @@ import { connect } from 'react-redux'
 import { changeCurrentNote } from '../../../store/currentNote'
 import './HomeView.scss'
 
+// random note generator
+let inputNotes = [36, 39, 41, 43, 46, 48];
+let noteGenerate = (inputNotes, numberOfNotes) => {
+    let randomNotes = [];
+    for (let len = 0; len < numberOfNotes; ++len) {
+        let note = inputNotes
+            .filter((value) => value != randomNotes[randomNotes.length - 1])[Math.floor(Math.random() * (inputNotes.length - 1))];
+        randomNotes.push(note)
+    }
+    return randomNotes;
+};
+let random = (arr) => {
+    console.log(arr);
+    let noteList = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
+    return arr.map(item=> noteList[item % 12] + Math.floor(item / 12));
+};
 const MidiWriter = require('midi-writer-js');
 const synth = new Tone.Synth().toMaster();
-
-let resList = [];
-for (let i = 3;i<= 6; i++){
-    let tempList = [];
-    let noteList = ['E', 'F', 'F#', 'G', 'A', 'A#', 'B', 'C', 'C#','D', 'D#'];
-    tempList = noteList.map((item, index) => {return item+i});
-    resList = resList.concat(tempList);
-}
-let numList = []
-for (i = 30; i<=73; i++){
-    numList.push(i)
-}
-
-
 const writeMIDI = () => {
     let track = new MidiWriter.Track();
-    track.addEvent(new MidiWriter.ProgramChangeEvent({ instrument: 1 }));
-    let note = new MidiWriter.NoteEvent({ pitch: ['C3'], duration: '4' });
-    track.addEvent(note);
-    note = new MidiWriter.NoteEvent({ pitch: ['D3'], duration: '4' });
-    track.addEvent(note);
-    note = new MidiWriter.NoteEvent({ pitch: ['E3'], duration: '4' });
-    track.addEvent(note);
-    note = new MidiWriter.NoteEvent({ pitch: ['F3'], duration: '4' });
-    track.addEvent(note);
-    note = new MidiWriter.NoteEvent({ pitch: ['G3'], duration: '4' });
-    track.addEvent(note);
-    note = new MidiWriter.NoteEvent({ pitch: ['A3'], duration: '4' });
-    track.addEvent(note);
-    note = new MidiWriter.NoteEvent({ pitch: ['B3'], duration: '4' });
-    track.addEvent(note);
-    note = new MidiWriter.NoteEvent({ pitch: ['C4'], duration: '4' });
-    track.addEvent(note);
-
-
-    note = new MidiWriter.NoteEvent({ pitch: ['D4'], duration: '4' });
-    track.addEvent(note);
-    note = new MidiWriter.NoteEvent({ pitch: ['E4'], duration: '4' });
-    track.addEvent(note);
-    note = new MidiWriter.NoteEvent({ pitch: ['F4'], duration: '4' });
-    track.addEvent(note);
-    note = new MidiWriter.NoteEvent({ pitch: ['G4'], duration: '4' });
-    track.addEvent(note);
-    note = new MidiWriter.NoteEvent({ pitch: ['A4'], duration: '4' });
-    track.addEvent(note);
-    note = new MidiWriter.NoteEvent({ pitch: ['B4'], duration: '4' });
-    track.addEvent(note);
-    note = new MidiWriter.NoteEvent({ pitch: ['C5'], duration: '4' });
-    track.addEvent(note);
-
+    track.addEvent(new MidiWriter.ProgramChangeEvent({instrument: 1}));
+    let generateNote = random(noteGenerate(inputNotes, 1001));
+    for (let counter = 0; counter < generateNote.length; counter++) {
+        {
+            console.log(counter);
+            let note = new MidiWriter.NoteEvent({pitch: [generateNote[counter]], duration: '16'});
+            track.addEvent(note);
+        }
+    }
     return new MidiWriter.Writer([track]);
 };
-
 const playMidi = (changeNote) => {
     const synth = new Tone.Synth().toMaster();
     MidiConvert.load(writeMIDI().dataUri(), function (midi) {
@@ -74,24 +50,22 @@ const playMidi = (changeNote) => {
 const mapNoteToFretboard = (note, position, color, stringStarts = [64, 59, 55, 50, 45, 40]) => {
     let good = stringStarts
         .map(i=>note.midi - i)
-        .map(i=>[{ fretPosition: i }])
-        .map(i=>i.filter(obj=>obj.fretPosition >= 0))
+        .map(i=>[{fretPosition: i}])
+        .map(i=>i.filter(obj=>obj.fretPosition >= 0));
     let bestFit = good.reduce((acc, curr)=> {
         if (!curr.length) {
             return acc
 
         }
-        if (curr[0].fretPosition - position >= 0 && curr[0].fretPosition - position < acc) return curr[0].fretPosition - position
+        if (curr[0].fretPosition - position >= 0 && curr[0].fretPosition - position < acc) return curr[0].fretPosition - position;
         return acc
     }, 999);
     let ready = good
         .map((i, stringIndex)=>
             i.filter(item => item.fretPosition - position === bestFit)
-                .map(item => ({ fretNum: note.midi - stringStarts[stringIndex], color, text: note.name })))
+                .map(item => ({fretNum: note.midi - stringStarts[stringIndex], color, text: note.name})));
     return ready
-
-
-}
+};
 const createSvg = (stringNumber,
                    numberOfFrets,
                    ratio,
@@ -124,25 +98,24 @@ const createSvg = (stringNumber,
                 x: ((fullScale - fullScale / Math.pow(2, fret.fretNum / ratio)) - (fullScale - fullScale / Math.pow(2, (fret.fretNum - 1) / ratio))) - fretWidth * 2,
                 y: ((fullScale / ratio) / stringNumber)
             };
-
             let ifOrigo = [
                 <rect x={horizontalShift + (origo.x - fretLength.x / 2)}
                       y={verticalShift + (origo.y - (fretLength.y / 2))}
                       width={fretLength.x + fretWidth}
                       height={fretLength.y - fretHeightCorrection}
-                      fill={fret.color} />,
+                      fill={fret.color}/>,
                 <text x={horizontalShift + origo.x} y={verticalShift + (origo.y + textCorrection)}
-                      fontSize={textSize} >{fret.text}</text>
+                      fontSize={textSize}>{fret.text}</text>
             ];
 
             let ifOrigoBlankedString = [
                 <rect x={horizontalShift + (origoBlankedString.x - fretLength.x / 2)}
                       y={verticalShift + (origoBlankedString.y - (fretLength.y / 2))} width="30"
                       height={fretLength.y - fretHeightCorrection}
-                      fill={fret.color} />,
+                      fill={fret.color}/>,
                 <text x={horizontalShift - textCorrection * 4}
                       y={verticalShift + (origoBlankedString.y + textCorrection)}
-                      fontSize={textSize} >{fret.text}</text>
+                      fontSize={textSize}>{fret.text}</text>
             ];
             if (fret.fretNum == 0) {
                 return ifOrigoBlankedString
@@ -153,8 +126,9 @@ const createSvg = (stringNumber,
     });
     // Displays nut
     let nut = () => {
-        return <rect x={horizontalShift - fretWidth - 35 / 2} y={verticalShift} width="35" height={(fullScale / ratio)}
-                     fill={fretsColor} />
+        return <rect x={horizontalShift - fretWidth - 35 / 2} y={verticalShift} width="35"
+                     height={(fullScale / ratio)}
+                     fill={fretsColor}/>
     };
     // Define: the distance of the frets
     let frets = Array.from(new Array(numberOfFrets)).map((item, index) => {
@@ -162,7 +136,7 @@ const createSvg = (stringNumber,
                      y={verticalShift}
                      width={fretWidth}
                      height={fullScale / ratio}
-                     fill={fretsColor} />
+                     fill={fretsColor}/>
     });
     // Displays the strings according to stringNumber
     let strings = Array.from(new Array(stringNumber)).map((item, index) => {
@@ -170,7 +144,7 @@ const createSvg = (stringNumber,
         return <rect key={index} x={horizontalShift + fretWidth}
                      y={verticalShift + (((fullScale / ratio) / (stringNumber)) / 2 + ((fullScale / ratio) / stringNumber) * index)}
                      width={fullScale - fullScale / Math.pow(2, numberOfFrets / ratio)} height={3 + index}
-                     fill={stringColor} />
+                     fill={stringColor}/>
     });
     // Display the mark points on the guitar neck
     let fretBoardPoint = markPoint.map((item, index)=> {
@@ -180,29 +154,27 @@ const createSvg = (stringNumber,
             returnCircle = [
                 <circle key={"down" + index}
                         cx={horizontalShift + (fullScale - fullScale / Math.pow(2, (item - 1) / ratio) + fullScale - fullScale / Math.pow(2, item / ratio)) / 2 + fretWidth / 2}
-                        cy={verticalShift + ((fullScale / ratio / 4) * 3)} r={pointSize} fill={markPointColor} />,
+                        cy={verticalShift + ((fullScale / ratio / 4) * 3)} r={pointSize} fill={markPointColor}/>,
 
                 <circle key={"up" + index}
                         cx={horizontalShift + (fullScale - fullScale / Math.pow(2, (item - 1) / ratio) + fullScale - fullScale / Math.pow(2, item / ratio)) / 2 + fretWidth / 2}
-                        cy={verticalShift + ((fullScale / ratio / 4))} r={pointSize} fill={markPointColor} />]
+                        cy={verticalShift + ((fullScale / ratio / 4))} r={pointSize} fill={markPointColor}/>]
         } else {
             returnCircle =
                 <circle key={index}
                         cx={horizontalShift + (fullScale - fullScale / Math.pow(2, (item - 1) / ratio) + fullScale - fullScale / Math.pow(2, item / 15)) / 2 + fretWidth / 2}
-                        cy={verticalShift + (fullScale / ratio / 2)} r={pointSize} fill={markPointColor} />
+                        cy={verticalShift + (fullScale / ratio / 2)} r={pointSize} fill={markPointColor}/>
         }
         return returnCircle;
     });
-
     // Displays blank fretboard without frets or strings
     let blankFretboard = () => {
         return <rect x={horizontalShift} y={verticalShift}
                      width={fullScale - fullScale / Math.pow(2, numberOfFrets / ratio)}
                      height={fullScale / ratio}
-                     fill={fretBoardColor} />
-    }
-
-    return <svg width={fullScale} height={verticalShift + (fullScale / ratio) + verticalShift} >
+                     fill={fretBoardColor}/>
+    };
+    return <svg width={fullScale} height={verticalShift + (fullScale / ratio) + verticalShift}>
         {blankFretboard()}
         {frets}
         {fretBoardPoint}
@@ -210,14 +182,13 @@ const createSvg = (stringNumber,
         {strings}
         {fretStuff}
     </svg>
-
-}
+};
 let handleSuccess = (stream) => {
-    let context = new window.AudioContext()
-    let input = context.createMediaStreamSource(stream)
-    var processor = context.createScriptProcessor(1024, 1, 1)
-    input.connect(processor)
-    processor.connect(context.destination)
+    let context = new window.AudioContext();
+    let input = context.createMediaStreamSource(stream);
+    var processor = context.createScriptProcessor(1024, 1, 1);
+    input.connect(processor);
+    processor.connect(context.destination);
     processor.onaudioprocess = (e) => {
         let inputBuffer = e.inputBuffer;
         var outputBuffer = e.outputBuffer;
@@ -229,13 +200,11 @@ let handleSuccess = (stream) => {
             }
         }
     }
-}
-
+};
 class HomeView extends React.Component {
     componentDidMount() {
-        playMidi(this.props.changeNote)
-        navigator.getUserMedia({ audio: true, video: false }, handleSuccess, console.log)
-
+        playMidi(this.props.changeNote);
+        navigator.getUserMedia({audio: true, video: false}, handleSuccess, console.log)
     }
 
     render() {
@@ -247,7 +216,7 @@ class HomeView extends React.Component {
         let markPoint = [3, 5, 7, 9, 12, 15, 17, 19, 21, 24];
         let fretBoardColor = "#fee4b4";
         let pointSize = ratio / 2;
-        let markPointColor = "back"
+        let markPointColor = "back";
         let textSize = 20;
         let stringColor = "#DAA520";
         let fretsColor = "#C0C0C0";
@@ -277,12 +246,11 @@ class HomeView extends React.Component {
         </div>
     }
 }
-;
 const mapStateToProps = (state, ownProps) => {
     return {
         currentNote: state.currentNote
     }
-}
+};
 
 const mapDispatchToProps = (dispatch) => {
     return {
@@ -290,7 +258,8 @@ const mapDispatchToProps = (dispatch) => {
             dispatch(changeCurrentNote(note))
         }
     }
-}
+};
+
 export default connect(
     mapStateToProps,
     mapDispatchToProps
