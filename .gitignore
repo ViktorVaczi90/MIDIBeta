@@ -4,5 +4,5 @@ CHANGELOG.md
 CONTRIBUTING.md
 LICENSE
 README.md
-
+.node_modules/
 npm-debug.log
