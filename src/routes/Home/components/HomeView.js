@@ -5,34 +5,42 @@ import { connect } from 'react-redux'
 import { changeCurrentNote } from '../../../store/currentNote'
 import './HomeView.scss'
 
+const model = new Model({
+    filepaths: {
+        model: 'http://localhost:3000/model.json',
+        weights: 'http://localhost:3000/model_03_18_weights.buf',
+        metadata: 'http://localhost:3000/model_03_18_metadata.json'
+    },
+    gpu: false
+})
+
+const FFT = require('jsfft');
+import { Model } from 'keras-js'
+const MidiWriter = require('midi-writer-js');
+const synth = new Tone.Synth().toMaster();
+
+
 // random note generator
 let inputNotes = [36, 39, 41, 43, 46, 48];
 let noteGenerate = (inputNotes, numberOfNotes) => {
     let randomNotes = [];
     for (let len = 0; len < numberOfNotes; ++len) {
         let note = inputNotes
-            .filter((value) => value != randomNotes[randomNotes.length - 1])[Math.floor(Math.random() * (inputNotes.length - 1))];
+          .filter((value) => value != randomNotes[randomNotes.length - 1])[Math.floor(Math.random() * (inputNotes.length - 1))];
         randomNotes.push(note)
     }
     return randomNotes;
 };
 let random = (arr) => {
-    console.log(arr);
     let noteList = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
     return arr.map(item=> noteList[item % 12] + Math.floor(item / 12));
 };
-const FFT = require('jsfft');
-//import {Model} from '../../../kerasSrc/keras'
-import { Model } from 'keras-js'
-const MidiWriter = require('midi-writer-js');
-const synth = new Tone.Synth().toMaster();
 const writeMIDI = () => {
     let track = new MidiWriter.Track();
     track.addEvent(new MidiWriter.ProgramChangeEvent({instrument: 1}));
     let generateNote = random(noteGenerate(inputNotes, 1001));
     for (let counter = 0; counter < generateNote.length; counter++) {
         {
-            console.log(counter);
             let note = new MidiWriter.NoteEvent({pitch: [generateNote[counter]], duration: '16'});
             track.addEvent(note);
         }
@@ -188,6 +196,8 @@ const createSvg = (stringNumber,
         {fretStuff}
     </svg>
 };
+let once = 0;
+const filteredNotes = new Array(20).fill(0)
 let handleSuccess = (stream) => {
     let context = new window.AudioContext()
     let input = context.createMediaStreamSource(stream)
