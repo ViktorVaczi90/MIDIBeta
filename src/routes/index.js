@@ -1,5 +1,6 @@
 // We only need to import the modules necessary for initial render
 import CoreLayout from '../layouts/CoreLayout'
+import About from './About'
 import Home from './Home'
 
 /*  Note: Instead of using JSX, we recommend using react-router
@@ -9,7 +10,7 @@ export const createRoutes = (store) => ({
   path        : '/',
   component   : CoreLayout,
   indexRoute  : Home,
-  childRoutes : [
+  childRoutes : [{path: 'about', component: About }
   ]
 })
 
