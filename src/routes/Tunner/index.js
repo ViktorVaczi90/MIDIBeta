@@ -1,5 +1,5 @@
-import TunnerView from './components/TunnerView'
+import TunerView from './components/TunerView'
 
 // Sync route definition
-export default TunnerView
+export default TunerView
 

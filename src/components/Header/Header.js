@@ -10,7 +10,7 @@ export const Header = () => (
       <AppBar
       title="Guitar learner zeta">
           <FlatButton label="Main" href="/" />
-          <FlatButton label="Tuner" href="tunner" />
+          <FlatButton label="Tuner" href="tuner"/>
           <FlatButton label="About" href="about" />
       </AppBar>
 
