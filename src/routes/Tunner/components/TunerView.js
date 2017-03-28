@@ -4,10 +4,10 @@ import './TunerView.scss'
 
 export const Tuner = () => {
     let tunnerOutline = () => {
-        return <rect x="0" y="0" width={300} height={200} stroke="black" fill="white" rx={10} ry={10}/>
+        return <rect x="0" y="0" width={300} height={100} stroke="black" fill="white" rx={10} ry={10}/>
     };
     let text = () => {
-        return <text x="50" y="50" fontFamily="Verdana" fontSize="35">
+        return <text x="50" y="50" fontSize="35">
             Note is: {listOfNotesFreqs()}
 
         </text>
@@ -39,27 +39,18 @@ export const Tuner = () => {
         for (let n = -((Math.floor(noteList.length / 12) / 2) * 12 + 3); n < (noteList.length); n++) {
             fN.push(f0 * Math.pow(a, n))
         }
-        let counter = 0;
-        while (true) {
-            if (fx <= (fN[counter])) {
+        let res = fN.map((item, index)=> {
+            if (item == fx) {
+                console.log(noteList[index])
+                return noteList[index]
+            }
 
-                if (fx == (fN[counter])) {
-                    console.log(noteList[counter]);
-                    break
-                }
-            }
-            counter++;
-            if (counter == noteList.length) {
-                break
-            }
-        }
-        let theNote = noteList[counter]
-        return theNote
+
+        });
+
+        return res
     };
 
-    {
-        listOfNotesFreqs()
-    }
 
 
     return <svg> width={500} height={500}>

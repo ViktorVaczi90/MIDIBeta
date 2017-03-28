@@ -11,7 +11,7 @@ export const createRoutes = (store) => ({
   path        : '/',
   component   : CoreLayout,
   indexRoute  : Home,
-  childRoutes : [{path: 'about', component: About },{path: 'tunner', component: Tunner }
+    childRoutes: [{path: 'about', component: About}, {path: 'tuner', component: Tunner}
   ]
 })
 
