@@ -2,13 +2,18 @@ import React from 'react'
 import { IndexLink, Link } from 'react-router'
 import './Header.scss'
 import AppBar from 'material-ui/AppBar';
+import FlatButton from 'material-ui/FlatButton';
+
 
 export const Header = () => (
   <div>
-    <AppBar
-      title="Guitar learner zeta"
-      iconClassNameRight="muidocs-icon-navigation-expand-more"
-    />
+      <AppBar
+      title="Guitar learner zeta">
+          <FlatButton label="Main" href="/" />
+          <FlatButton label="Tuner" href="tunner" />
+          <FlatButton label="About" href="about" />
+      </AppBar>
+
 {/*    /!*<IndexLink to='/' activeClassName='route--active'>*!/
       /!*Home*!/
     /!*</IndexLink>*!/
@@ -16,6 +21,7 @@ export const Header = () => (
 /!*    <Link to='/counter' activeClassName='route--active'>
       Counter
     </Link>*!/*/}
+
   </div>
 )
 
