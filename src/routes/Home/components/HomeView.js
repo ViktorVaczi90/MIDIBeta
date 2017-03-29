@@ -22,12 +22,6 @@ const FFT = require('jsfft');
 import { Model } from 'keras-js'
 const MidiWriter = require('midi-writer-js');
 
-import createPlotlyComponent from 'react-plotlyjs';
-//See the list of possible plotly bundles at https://github.com/plotly/plotly.js/blob/master/dist/README.md#partial-bundles or roll your own
-//import Plotly from 'plotly.js/dist/plotly-cartesian';
-//const PlotlyComponent = createPlotlyComponent(Plotly);
-
-
 // random note generator
 let inputNotes = [36, 39, 41, 43, 46, 48];
 let noteGenerate = (inputNotes, numberOfNotes) => {
@@ -69,7 +63,9 @@ const playMidi = (changeNote) => {
 let once = 0;
 const filteredNotes = new Array(20).fill(0)
 let data = [];
+let localStream = undefined;
 let handleSuccess = (stream) => {
+    if(!localStream) localStream = stream;
     //let pitchDetect = new PitchDetect(stream);
     let context = new window.AudioContext()
     let input = context.createMediaStreamSource(stream)
@@ -128,7 +124,9 @@ class HomeView extends React.Component {
         playMidi(this.props.changeNote)
         navigator.getUserMedia({audio: true, video: false}, handleSuccess, console.log)
     }
-
+    componentWillUnmount(){
+        localStream.getAudioTracks().forEach(track => track.stop())
+    }
     render() {
 
         return <div>

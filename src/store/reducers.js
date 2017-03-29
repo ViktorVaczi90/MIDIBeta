@@ -1,11 +1,13 @@
 import { combineReducers } from 'redux'
 import locationReducer from './location'
-import currentNoteReducer from './currentNote.js'
+import currentNoteReducer from './currentNote'
+import currentFreqReducer from './currentFreq'
 
 export const makeRootReducer = (asyncReducers) => {
   return combineReducers({
     location: locationReducer,
     currentNote: currentNoteReducer,
+    currentFreq: currentFreqReducer,
     ...asyncReducers
   })
 }
