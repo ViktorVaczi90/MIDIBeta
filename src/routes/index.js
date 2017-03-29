@@ -2,7 +2,7 @@
 import CoreLayout from '../layouts/CoreLayout'
 import About from './About'
 import Home from './Home'
-import Tunner from './Tunner'
+import Tuner from './Tuner'
 
 /*  Note: Instead of using JSX, we recommend using react-router
     PlainRoute objects to build route definitions.   */
@@ -11,7 +11,7 @@ export const createRoutes = (store) => ({
   path        : '/',
   component   : CoreLayout,
   indexRoute  : Home,
-  childRoutes : [{path: 'about', component: About },{path: 'tunner', component: Tunner }
+  childRoutes : [{path: 'about', component: About },{path: 'tuner', component: Tuner }
   ]
 })
 

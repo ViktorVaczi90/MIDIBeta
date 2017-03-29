@@ -42,7 +42,7 @@ const displayNote = (
             }
         })
     })
-    console.log(retVal)
+    //console.log(retVal)
     return retVal
 }
 

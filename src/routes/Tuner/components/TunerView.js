@@ -1,13 +1,13 @@
 import React from 'react'
-import './TunnerView.scss'
+import './TunerView.scss'
+import RaisedButton from 'material-ui/RaisedButton';
 
-
-export const Tunner = () => {
-    let tunnerOutline = () => {
-        return <rect x="0" y="0" width={300} height={200} stroke="black" fill="white" rx={10} ry={10}/>
+export const Tuner = () => {
+    let tunerOutline = () => {
+        return <rect x="0" y="0" width={300} height={200} stroke="black" fill="white" rx={10} ry={10} />
     };
     let text = () => {
-        return <text x="50" y="50" fontFamily="Verdana" fontSize="35">
+        return <text x="50" y="50" fontFamily="Verdana" fontSize="35" >
             Note
         </text>
     };
@@ -31,10 +31,14 @@ export const Tunner = () => {
 
     };
 
-    return <svg width={500} height={500}>
-        {tunnerOutline()}
-        {text()}
-        {frequencyZero()}
-    </svg>
+    return <div>
+        <svg width={500} height={500} >
+            {tunerOutline()}
+            {text()}
+            {frequencyZero()}
+        </svg>
+        <RaisedButton label={'asdasd'}  primary={true}/>
+    </div>
+
 };
-export default Tunner
+export default Tuner

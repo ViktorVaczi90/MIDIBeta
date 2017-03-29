@@ -1,28 +1,20 @@
 import React from 'react'
-import { IndexLink, Link } from 'react-router'
+import baseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
 import './Header.scss'
-import AppBar from 'material-ui/AppBar';
-import FlatButton from 'material-ui/FlatButton';
-
-
+import { Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle } from 'material-ui/Toolbar';
+import HeaderLink from './HeaderLink'
+import { Router, Route, browserHistory, IndexRoute } from 'react-router'
 export const Header = () => (
-  <div>
-      <AppBar
-      title="Guitar learner zeta">
-          <FlatButton label="Main" href="/" />
-          <FlatButton label="Tuner" href="tunner" />
-          <FlatButton label="About" href="about" />
-      </AppBar>
-
-{/*    /!*<IndexLink to='/' activeClassName='route--active'>*!/
-      /!*Home*!/
-    /!*</IndexLink>*!/
-    {' · '}
-/!*    <Link to='/counter' activeClassName='route--active'>
-      Counter
-    </Link>*!/*/}
-
-  </div>
+    <div>
+        <Toolbar style={baseTheme}>
+            <ToolbarGroup firstChild={true}>
+                <HeaderLink label="Home" href="/"/>
+                <HeaderLink label="Tuner" href="/tuner" />
+                <HeaderLink label="About" href="/about" />
+                {console.log(browserHistory)}
+            </ToolbarGroup>
+        </Toolbar>
+    </div>
 )
 
 export default Header
