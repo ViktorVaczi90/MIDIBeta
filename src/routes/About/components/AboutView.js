@@ -15,6 +15,7 @@ const styles = {
     gridList: {
         width: 500,
         height: 450,
+        flexWrap: 'nowrap',
         overflowY: 'auto',
     },
 };
@@ -31,7 +32,7 @@ const tilesData = [
         author: 'Árpi',
     },
     {
-        img: 'images/grid-list/camera-813814_640.jpg',
+        img: 'balazs.jpg',
         title: 'Camera',
         author: 'Balázs',
     },

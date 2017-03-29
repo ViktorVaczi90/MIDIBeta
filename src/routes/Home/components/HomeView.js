@@ -39,7 +39,7 @@ let random = (arr) => {
 const writeMIDI = () => {
     let track = new MidiWriter.Track();
     track.addEvent(new MidiWriter.ProgramChangeEvent({instrument: 1}));
-    let generateNote = random(noteGenerate(inputNotes, 2));
+    let generateNote = random(noteGenerate(inputNotes, 100));
     for (let counter = 0; counter < generateNote.length; counter++) {
         {
             let note = new MidiWriter.NoteEvent({pitch: [generateNote[counter]], duration: '16'});

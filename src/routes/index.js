@@ -2,7 +2,7 @@
 import CoreLayout from '../layouts/CoreLayout'
 import About from './About'
 import Home from './Home'
-import Tunner from './Tunner'
+import Tunner from './Tuner'
 
 /*  Note: Instead of using JSX, we recommend using react-router
     PlainRoute objects to build route definitions.   */
